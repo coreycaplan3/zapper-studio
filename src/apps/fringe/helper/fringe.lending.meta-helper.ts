@@ -4,13 +4,13 @@ import { sumBy } from 'lodash';
 import { MetadataItemWithLabel } from '~balance/balance-fetcher.interface';
 import { ContractPositionBalance, TokenBalance } from '~position/position-balance.interface';
 
-type CompoundLendingMetaHelperParams = {
+type FringeLendingMetaHelperParams = {
   balances: (TokenBalance | ContractPositionBalance)[];
 };
 
 @Injectable()
 export class FringeLendingMetaHelper {
-  getMeta({ balances }: CompoundLendingMetaHelperParams) {
+  getMeta({ balances }: FringeLendingMetaHelperParams) {
     const collaterals = balances.filter(balance => balance.balanceUSD > 0);
     const debt = balances.filter(balance => balance.balanceUSD < 0);
     const totalCollateralUSD = sumBy(collaterals, a => a.balanceUSD);

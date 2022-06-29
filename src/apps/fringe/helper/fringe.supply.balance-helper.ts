@@ -10,7 +10,7 @@ import { CompoundCToken } from '../contracts';
 
 import { FringeSupplyTokenDataProps } from './fringe.supply.token-helper';
 
-type CompoundSupplyBalanceHelperParams<T> = {
+type FringeSupplyBalanceHelperParams<T> = {
   address: string;
   network: Network;
   appId: string;
@@ -30,7 +30,7 @@ export class FringeSupplyBalanceHelper {
     groupId,
     getTokenContract,
     getBalanceRaw,
-  }: CompoundSupplyBalanceHelperParams<T>) {
+  }: FringeSupplyBalanceHelperParams<T>) {
     const multicall = this.appToolkit.getMulticall(network);
 
     const supplyTokens = await this.appToolkit.getAppTokenPositions<FringeSupplyTokenDataProps>({
@@ -38,15 +38,17 @@ export class FringeSupplyBalanceHelper {
       groupIds: [groupId],
       network,
     });
+    console.log(
+      'supplyTokens',
+      supplyTokens.map(token => token.address),
+    );
 
-    const supplyTokenBalances = await Promise.all(
+    return await Promise.all(
       supplyTokens.map(async supplyToken => {
         const supplyTokenContract = getTokenContract({ address: supplyToken.address, network });
         const balanceRaw = await getBalanceRaw({ contract: supplyTokenContract, multicall, address });
         return drillBalance(supplyToken, balanceRaw.toString());
       }),
     );
-
-    return supplyTokenBalances;
   }
 }

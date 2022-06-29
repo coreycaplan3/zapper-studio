@@ -39,7 +39,7 @@ export class FringeClaimableBalanceHelper {
     rewardTokenAddress,
     plpAddress,
   }: FringeBalanceHelperParams) {
-    // there are no rewards yet
+    // TODO fix when there are rewards activated
     return [];
     // const lensContract = this.compoundContractFactory.compoundLens({ address: lensAddress, network });
     // const prices = await this.appToolkit.getBaseTokenPrices(network);

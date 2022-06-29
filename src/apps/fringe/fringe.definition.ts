@@ -45,7 +45,7 @@ export const FRINGE_DEFINITION = appDefinition({
 });
 
 @Register.AppDefinition(FRINGE_DEFINITION.id)
-export class CompoundAppDefinition extends AppDefinition {
+export class FringeAppDefinition extends AppDefinition {
   constructor() {
     super(FRINGE_DEFINITION);
   }

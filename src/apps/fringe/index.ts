@@ -1,5 +1,5 @@
-export { FRINGE_DEFINITION, CompoundAppDefinition } from './fringe.definition';
-export { CompoundAppModule } from './fringe.module';
+export { FRINGE_DEFINITION, FringeAppDefinition } from './fringe.definition';
+export { FringeAppModule } from './fringe.module';
 export { FringeContractFactory } from './contracts';
 
 /* Helpers */

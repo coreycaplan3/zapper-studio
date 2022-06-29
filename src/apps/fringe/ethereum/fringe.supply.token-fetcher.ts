@@ -24,28 +24,33 @@ export class EthereumFringeSupplyTokenFetcher implements PositionFetcher<AppToke
       network,
       appId,
       groupId,
-      plpAddress: '0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b',
+      plpAddress: '0x46558DA82Be1ae1955DE6d6146F8D2c1FE2f9C5E',
       getPlpContract: ({ address, network }) => this.fringeContractFactory.plp({ address, network }),
       getTokenContract: ({ address, network }) => this.fringeContractFactory.compoundCToken({ address, network }),
-      getAllMarkets: async ({ contract, multicall }) => {
+      getAllCollateralMarkets: async ({ contract }) => {
         const allMarkets = {};
-        const lendingTokensLength = await multicall.wrap(contract).lendingTokensLength();
-        for (let i = 0; i < lendingTokensLength.toNumber(); i++) {
-          const lendingToken = await multicall.wrap(contract).lendingTokens(i.toString());
-          allMarkets[lendingToken] = lendingToken;
-        }
-        const projectTokensLength = await multicall.wrap(contract).projectTokensLength();
+        const projectTokensLength = await contract.projectTokensLength();
         for (let i = 0; i < projectTokensLength.toNumber(); i++) {
-          const projectToken = await multicall.wrap(contract).projectTokens(i.toString());
+          const projectToken = await contract.projectTokens(i.toString());
           allMarkets[projectToken] = projectToken;
         }
-        return Object.keys(allMarkets);
+        return Object.values(allMarkets);
+      },
+      getAllLendingMarkets: async ({ contract }) => {
+        const allMarkets = {};
+        const lendingTokensLength = await contract.lendingTokensLength();
+        for (let i = 0; i < lendingTokensLength.toNumber(); i++) {
+          const lendingToken = await contract.lendingTokens(i.toString());
+          allMarkets[lendingToken] = (await contract.lendingTokenInfo(lendingToken)).bLendingToken;
+        }
+        return Object.values(allMarkets);
       },
       getExchangeRate: ({ contract, multicall }) => multicall.wrap(contract).exchangeRateCurrent(),
       getSupplyRate: ({ contract, multicall }) => multicall.wrap(contract).supplyRatePerBlock(),
       getBorrowRate: ({ contract, multicall }) => multicall.wrap(contract).borrowRatePerBlock(),
       getUnderlyingAddress: ({ contract, multicall }) => multicall.wrap(contract).underlying(),
-      getExchangeRateMantissa: ({ underlyingTokenDecimals }) => underlyingTokenDecimals + 10,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      getExchangeRateMantissa: ({ underlyingTokenDecimals }) => 18,
     });
   }
 }

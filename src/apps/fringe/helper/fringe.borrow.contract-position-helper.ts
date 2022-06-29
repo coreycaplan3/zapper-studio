@@ -14,7 +14,7 @@ import { ContractPosition } from '~position/position.interface';
 import { borrowed } from '~position/position.utils';
 import { Network } from '~types/network.interface';
 
-import { FringeContractFactory, CompoundCToken } from '../contracts';
+import { CompoundCToken, FringeContractFactory } from '../contracts';
 
 import { FringeSupplyTokenDataProps } from './fringe.supply.token-helper';
 
@@ -23,7 +23,7 @@ export type CompoundBorrowContractPositionDataProps = FringeSupplyTokenDataProps
   borrow: number;
 };
 
-type CompoundBorrowContractPositionHelperParams = {
+type FringeBorrowContractPositionHelperParams = {
   network: Network;
   appId: string;
   groupId: string;
@@ -49,7 +49,7 @@ export class FringeBorrowContractPositionHelper {
     groupId,
     supplyGroupId,
     resolveCashRaw = ({ contract, multicall }) => multicall.wrap(contract).getCash(),
-  }: CompoundBorrowContractPositionHelperParams) {
+  }: FringeBorrowContractPositionHelperParams) {
     const appTokens = await this.appToolkit.getAppTokenPositions<FringeSupplyTokenDataProps>({
       appId,
       groupIds: [supplyGroupId],
@@ -120,8 +120,6 @@ export class FringeBorrowContractPositionHelper {
       return contractPosition;
     });
 
-    const positions = await Promise.all(promisedPositions);
-
-    return positions;
+    return await Promise.all(promisedPositions);
   }
 }

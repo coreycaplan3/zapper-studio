@@ -10,7 +10,7 @@ import { CompoundCToken } from '../contracts';
 
 import { FringeSupplyTokenDataProps } from './fringe.supply.token-helper';
 
-type CompoundBorrowBalanceHelperParams<T> = {
+type FringeBorrowBalanceHelperParams<T> = {
   address: string;
   network: Network;
   appId: string;
@@ -30,7 +30,7 @@ export class FringeBorrowBalanceHelper {
     groupId,
     getTokenContract,
     getBorrowBalanceRaw,
-  }: CompoundBorrowBalanceHelperParams<T>) {
+  }: FringeBorrowBalanceHelperParams<T>) {
     const multicall = this.appToolkit.getMulticall(network);
 
     const borrowPositions = await this.appToolkit.getAppContractPositions<FringeSupplyTokenDataProps>({
@@ -39,7 +39,7 @@ export class FringeBorrowBalanceHelper {
       network,
     });
 
-    const borrowPositionBalances = await Promise.all(
+    return await Promise.all(
       borrowPositions.map(async borrowPosition => {
         const borrowContract = getTokenContract({ address: borrowPosition.address, network });
         const balanceRaw = await getBorrowBalanceRaw({ contract: borrowContract, multicall, address });
@@ -47,7 +47,5 @@ export class FringeBorrowBalanceHelper {
         return { ...borrowPosition, tokens, balanceUSD: tokens[0].balanceUSD };
       }),
     );
-
-    return borrowPositionBalances;
   }
 }
